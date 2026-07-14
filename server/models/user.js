@@ -38,6 +38,23 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  recentSearches: {
+    type: [{
+      osmType: String,
+      osmId: String,
+      name: String,
+      lat: Number,
+      lon: Number,
+      location: String,
+      viewedAt: { type: Date, default: Date.now }
+    }],
+    default: []
+  },
+  unitPreference: {
+    type: String,
+    enum: ['imperial', 'metric'],
+    default: 'imperial'
+  },
   createdAt: {
     type: Date,
     default: Date.now

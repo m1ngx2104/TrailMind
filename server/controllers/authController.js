@@ -192,4 +192,27 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { register, verifyEmail, login, logout, forgotPassword, resetPassword, getMe };
+// Update unit preference (imperial/metric)
+const updateUnits = async (req, res) => {
+  try {
+    const { unitPreference } = req.body;
+    if (!['imperial', 'metric'].includes(unitPreference)) {
+      return res.status(400).json({ message: 'unitPreference must be "imperial" or "metric"' });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      { unitPreference },
+      { new: true }
+    ).select('-password -verificationToken -resetPasswordToken');
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ unitPreference: user.unitPreference });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+module.exports = { register, verifyEmail, login, logout, forgotPassword, resetPassword, getMe, updateUnits };

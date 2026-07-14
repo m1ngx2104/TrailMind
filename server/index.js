@@ -19,6 +19,8 @@ app.use(cookieParser());
 // Routes
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
+const trailRoutes = require('./routes/trails');
+app.use('/api/trails', trailRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
