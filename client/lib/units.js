@@ -33,3 +33,19 @@ export const formatTemp = (celsius, unit) => {
   if (celsius == null) return celsius;
   return unit === 'metric' ? `${Math.round(celsius)}C` : `${Math.round((celsius * 9) / 5 + 32)}F`;
 };
+
+// Single-value distance (km from the server), unlike formatDistanceRange above.
+export const formatDistance = (km, unit) => {
+  if (km == null) return km;
+  return unit === 'metric' ? `${km.toFixed(1)} km` : `${(km * 0.621371).toFixed(1)} mi`;
+};
+
+// Duration is duration regardless of unit preference — no metric/imperial split.
+export const formatDuration = (minutes) => {
+  if (minutes == null) return minutes;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (h === 0) return `${m} min`;
+  if (m === 0) return `${h}h`;
+  return `${h}h ${m}m`;
+};

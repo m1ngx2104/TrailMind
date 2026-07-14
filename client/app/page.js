@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from '../components/Navbar';
+import ChatWidget from '../components/ChatWidget';
 import { getUnitPreference, formatDistanceRange, formatElevation, formatTemp, UNITS_CHANGED_EVENT } from '../lib/units';
 
 // Filter buckets are defined server-side in miles/feet (Short < 3mi, Low < 300ft, etc.)
@@ -308,7 +309,12 @@ export default function Home() {
         <section className="max-w-2xl mx-auto px-6 mb-10">
           <h3 className="text-sm text-gray-400 mb-3">Recently viewed parks</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {recentSearches.map((s) => (
+            {recentSearches
+              .filter(
+                (s, index, self) =>
+                  index === self.findIndex((x) => x.osmType === s.osmType && x.osmId === s.osmId)
+              )
+              .map((s) => (
               <Link
                 key={`${s.osmType}-${s.osmId}`}
                 href={`/parks/${s.osmType}/${s.osmId}?lat=${s.lat}&lon=${s.lon}&date=${today}&name=${encodeURIComponent(s.name)}&location=${encodeURIComponent(s.location || '')}`}
@@ -418,6 +424,8 @@ export default function Home() {
           </div>
         </section>
       )}
+
+      <ChatWidget date={date} homepageLocation={location} />
     </main>
   );
 }

@@ -21,6 +21,8 @@ const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 const trailRoutes = require('./routes/trails');
 app.use('/api/trails', trailRoutes);
+const chatRoutes = require('./routes/chat');
+app.use('/api/chat', chatRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

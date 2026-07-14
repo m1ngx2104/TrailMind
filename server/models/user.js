@@ -55,6 +55,21 @@ const userSchema = new mongoose.Schema({
     enum: ['imperial', 'metric'],
     default: 'imperial'
   },
+  savedTrails: {
+    type: [{
+      trailId: String,
+      name: String,
+      difficulty: String,
+      distanceMiles: Number,
+      parkOsmType: String,
+      parkOsmId: String,
+      parkLat: Number,
+      parkLon: Number,
+      parkName: String,
+      savedAt: { type: Date, default: Date.now }
+    }],
+    default: []
+  },
   createdAt: {
     type: Date,
     default: Date.now
