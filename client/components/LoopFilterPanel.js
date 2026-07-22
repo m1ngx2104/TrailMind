@@ -53,7 +53,7 @@ export default function LoopFilterPanel({ filters, onChange }) {
     <div className="absolute top-3 right-3 z-[1000]">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="bg-gray-900/90 backdrop-blur border border-gray-700 hover:border-gray-500 text-white text-xs px-3 py-2 rounded-lg shadow-lg flex items-center gap-1.5"
+        className="bg-[rgba(26,36,32,0.85)] backdrop-blur-md border border-forest-border hover:border-green-500/50 text-forest-text text-xs px-3 py-2 rounded-lg shadow-lg flex items-center gap-1.5 transition-colors"
       >
         Filters
         {activeCount > 0 && (
@@ -62,10 +62,10 @@ export default function LoopFilterPanel({ filters, onChange }) {
       </button>
 
       {open && (
-        <div className="mt-2 bg-gray-900/95 backdrop-blur border border-gray-700 rounded-lg p-3 shadow-2xl w-64 space-y-3">
+        <div className="mt-2 bg-[rgba(26,36,32,0.95)] backdrop-blur-md border border-forest-border rounded-lg p-3 shadow-2xl w-64 space-y-3">
           {FILTER_GROUPS.map((group) => (
             <div key={group.key}>
-              <p className="text-[10px] uppercase tracking-wide text-gray-500 mb-1.5">{group.label}</p>
+              <p className="text-[10px] uppercase tracking-wide text-forest-muted mb-1.5">{group.label}</p>
               <div className="flex flex-wrap gap-1.5">
                 {group.options.map((opt) => {
                   const value = typeof opt === 'string' ? opt : opt.value;
@@ -80,7 +80,7 @@ export default function LoopFilterPanel({ filters, onChange }) {
                       className={`text-xs px-2 py-1 rounded-full border transition-colors ${
                         active
                           ? 'bg-green-600 border-green-600 text-white'
-                          : 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-500'
+                          : 'bg-forest-bg border-forest-border text-forest-text/80 hover:border-green-500/50'
                       }`}
                     >
                       {label}
@@ -93,7 +93,7 @@ export default function LoopFilterPanel({ filters, onChange }) {
           {activeCount > 0 && (
             <button
               onClick={() => onChange(EMPTY_LOOP_FILTERS)}
-              className="text-[11px] text-gray-400 hover:text-white underline"
+              className="text-[11px] text-forest-muted hover:text-forest-text underline"
             >
               Clear all
             </button>

@@ -32,6 +32,10 @@ export default function ParkDetailPage() {
   const [routeError, setRouteError] = useState(null);
   const [filters, setFilters] = useState(EMPTY_LOOP_FILTERS);
   const [routeRetryCount, setRouteRetryCount] = useState(0);
+  const [routingStrategy, setRoutingStrategy] = useState(null);
+  const [timeBudgetMinutes, setTimeBudgetMinutes] = useState(null);
+  const [trailCoveragePercent, setTrailCoveragePercent] = useState(null);
+  const [totalParkTrailKm, setTotalParkTrailKm] = useState(null);
 
   const [parkingLots, setParkingLots] = useState([]);
   const [restrooms, setRestrooms] = useState([]);
@@ -134,6 +138,10 @@ export default function ParkDetailPage() {
         setParkingLots(json.parkingLots || []);
         setRestrooms(json.restrooms || []);
         setRestroomCount(json.restroomCount || 0);
+        setRoutingStrategy(json.routingStrategy || null);
+        setTimeBudgetMinutes(json.timeBudgetMinutes ?? null);
+        setTrailCoveragePercent(json.trailCoveragePercent ?? null);
+        setTotalParkTrailKm(json.totalParkTrailKm ?? null);
       })
       .catch(() => {
         setRouteError({ message: 'Could not calculate a route for this park.', retryable: false });
@@ -141,6 +149,10 @@ export default function ParkDetailPage() {
         setRawTrails([]);
         setRawTrailColor(null);
         setRouteMessage(null);
+        setRoutingStrategy(null);
+        setTimeBudgetMinutes(null);
+        setTrailCoveragePercent(null);
+        setTotalParkTrailKm(null);
       })
       .finally(() => setRouteLoading(false));
     // Depend on the selected lot's coordinates (primitives), not the object
@@ -164,26 +176,28 @@ export default function ParkDetailPage() {
   const difficultyClass = (difficulty) =>
     difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
     difficulty === 'Moderate' ? 'bg-yellow-500/20 text-yellow-400' :
+    difficulty === 'Hard' ? 'bg-orange-500/20 text-orange-400' :
     'bg-red-500/20 text-red-400';
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
+    <main className="min-h-screen bg-forest-bg text-forest-text">
       <Navbar backButton={true} />
 
       <div className="max-w-4xl mx-auto px-6 py-10">
-        <h2 className="text-4xl font-bold mb-2">{decodeURIComponent(name || 'Park Detail')}</h2>
-        <p className="text-gray-400 mb-8">Hiking date: {date}</p>
+        <h2 className="text-3xl font-bold mb-2">{decodeURIComponent(name || 'Park Detail')}</h2>
+        <div className="w-10 h-1 bg-green-500 rounded-full mb-3" aria-hidden="true" />
+        <p className="text-forest-muted mb-8">Hiking date: <span className="text-green-400 font-medium">{date}</span></p>
 
-        <div className="bg-gray-900 rounded-2xl p-6 mb-6">
+        <div className="bg-forest-surface border border-forest-border rounded-2xl p-6 mb-6">
           {!routeLoading && (parkingLots.length > 0 || restrooms.length > 0) && (
             <div className="flex flex-wrap items-center gap-4 mb-3">
               {parkingLots.length > 0 && (
                 <div className="flex items-center gap-2">
-                  <label className="text-xs text-gray-400">Start from parking lot:</label>
+                  <label className="text-xs text-forest-muted">Start from parking lot:</label>
                   <select
                     value={selectedParkingLotId ?? ''}
                     onChange={(e) => setSelectedParkingLotId(e.target.value ? Number(e.target.value) : null)}
-                    className="bg-gray-800 border border-gray-700 text-white text-xs rounded-lg px-2 py-1.5"
+                    className="bg-forest-bg border border-forest-border text-forest-text text-xs rounded-lg px-2 py-1.5 outline-none focus:border-green-500 transition-colors"
                   >
                     <option value="">Best available start point</option>
                     {parkingLots.map((lot) => (
@@ -195,7 +209,7 @@ export default function ParkDetailPage() {
 
               <div className="flex items-center gap-3">
                 {parkingLots.length > 0 && (
-                  <label className="flex items-center gap-1.5 text-xs text-gray-400">
+                  <label className="flex items-center gap-1.5 text-xs text-forest-muted">
                     <input
                       type="checkbox"
                       checked={showParkingLayer}
@@ -205,7 +219,7 @@ export default function ParkDetailPage() {
                   </label>
                 )}
                 {restrooms.length > 0 && (
-                  <label className="flex items-center gap-1.5 text-xs text-gray-400">
+                  <label className="flex items-center gap-1.5 text-xs text-forest-muted">
                     <input
                       type="checkbox"
                       checked={showRestroomLayer}
@@ -222,7 +236,7 @@ export default function ParkDetailPage() {
             className={
               mounted && fullscreen
                 ? 'fixed inset-0 w-screen h-screen z-[9999] overflow-hidden'
-                : 'relative rounded-xl overflow-hidden transition-all h-[500px]'
+                : 'relative rounded-xl border border-forest-border overflow-hidden transition-all h-[500px]'
             }
           >
             <div
@@ -234,7 +248,7 @@ export default function ParkDetailPage() {
             >
               <button
                 onClick={() => setFullscreen(!fullscreen)}
-                className="bg-gray-900/90 backdrop-blur border border-gray-700 hover:border-gray-500 text-white text-xs px-3 py-2 rounded-lg shadow-lg"
+                className="bg-[rgba(26,36,32,0.85)] backdrop-blur-md border border-forest-border hover:border-green-500/50 text-forest-text text-xs px-3 py-2 rounded-lg shadow-lg transition-colors"
               >
                 {fullscreen ? 'Exit Fullscreen' : 'Fullscreen Map'}
               </button>
@@ -260,13 +274,14 @@ export default function ParkDetailPage() {
             )}
 
             {routeLoading && (
-              <div className="absolute top-14 left-3 z-[1000] bg-gray-900/90 backdrop-blur border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-400 shadow-lg">
-                Calculating optimal route...
+              <div className="absolute inset-0 z-[1000] bg-forest-bg/60 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3">
+                <div className="w-8 h-8 border-2 border-forest-border border-t-green-500 rounded-full animate-spin" aria-hidden="true" />
+                <p className="text-sm text-forest-text">Calculating optimal route...</p>
               </div>
             )}
 
             {!routeLoading && routeError && (
-              <div className="absolute top-14 left-3 z-[1000] bg-gray-900/90 backdrop-blur border border-gray-700 rounded-lg px-3 py-3 text-xs text-gray-300 shadow-lg max-w-[260px]">
+              <div className="absolute top-14 left-3 z-[1000] bg-[rgba(26,36,32,0.85)] backdrop-blur-md border border-forest-border rounded-lg px-3 py-3 text-xs text-forest-text shadow-lg max-w-[260px]">
                 <p className="mb-2">
                   {routeError.retryable
                     ? 'Trail data temporarily unavailable — OpenStreetMap is not responding. Try again in a few minutes.'
@@ -274,7 +289,7 @@ export default function ParkDetailPage() {
                 </p>
                 <button
                   onClick={() => setRouteRetryCount((c) => c + 1)}
-                  className="bg-gray-800 hover:bg-gray-700 border border-gray-600 text-white text-xs px-3 py-1.5 rounded-lg"
+                  className="bg-forest-bg hover:bg-forest-surface-hover border border-forest-border text-forest-text text-xs px-3 py-1.5 rounded-lg transition-colors"
                 >
                   Retry
                 </button>
@@ -282,35 +297,59 @@ export default function ParkDetailPage() {
             )}
 
             {!routeLoading && !routeError && !route && (
-              <div className="absolute top-14 left-3 z-[1000] bg-gray-900/90 backdrop-blur border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-400 shadow-lg max-w-[260px]">
+              <div className="absolute top-14 left-3 z-[1000] bg-[rgba(26,36,32,0.85)] backdrop-blur-md border border-forest-border rounded-lg px-3 py-2 text-xs text-forest-muted shadow-lg max-w-[260px]">
                 {routeMessage || 'No trail data found for this park'}
               </div>
             )}
 
             {route && (
               <div className="absolute bottom-3 left-3 right-3 z-[1000]">
-                <div className="bg-gray-900/95 backdrop-blur border border-gray-700 rounded-xl p-3 shadow-2xl">
+                <div className="bg-forest-surface/95 backdrop-blur border border-forest-border rounded-xl p-3 shadow-2xl">
                   <div className="flex items-center gap-2">
                     <span className="text-lg">🥾</span>
-                    <p className="text-white font-semibold text-sm">Full Park Route</p>
+                    <p className="text-forest-text font-semibold text-sm">
+                      {routingStrategy === 'budget_subnetwork' ? 'Recommended Route' : 'Full Park Route'}
+                    </p>
+                    {routingStrategy === 'full_coverage' && (
+                      <span className="text-[10px] bg-green-600 text-white px-1.5 py-0.5 rounded-full">✓ Covers all trails</span>
+                    )}
+                    {routingStrategy === 'budget_subnetwork' && trailCoveragePercent != null && (
+                      <span className="text-[10px] bg-blue-600 text-white px-1.5 py-0.5 rounded-full">{trailCoveragePercent}% of park trails</span>
+                    )}
                     {route.isClosedLoop && (
                       <span className="text-[10px] bg-green-600 text-white px-1.5 py-0.5 rounded-full">✓ closed loop</span>
                     )}
                   </div>
-                  <div className="flex flex-wrap items-center gap-2 mt-1.5 text-xs text-gray-300">
-                    <span className={`px-2 py-0.5 rounded-full font-medium ${difficultyClass(route.difficulty)}`}>
+                  <div className="flex flex-wrap items-center divide-x divide-forest-border mt-1.5 text-xs text-forest-text/90">
+                    <span className={`px-2 py-0.5 mr-2 rounded-full font-medium ${difficultyClass(route.difficulty)}`}>
                       {route.difficulty}
                     </span>
-                    <span>📏 {formatDistance(route.totalDistanceKm, unit)}</span>
-                    <span>⏱ {formatDuration(route.estimatedTimeMinutes)}</span>
-                    <span>📈 {formatElevation(route.elevationGain, unit)}</span>
+                    <span className="pl-2 pr-2">📏 {formatDistance(route.totalDistanceKm, unit)}</span>
+                    <span className="pl-2 pr-2">⏱ {formatDuration(route.estimatedTimeMinutes)}</span>
+                    <span className="pl-2">📈 {formatElevation(route.elevationGain, unit)}</span>
                   </div>
+                  {routingStrategy === 'budget_subnetwork' && timeBudgetMinutes != null && (
+                    <p className="text-[11px] text-forest-muted mt-1.5">
+                      Est. {formatDuration(route.estimatedTimeMinutes)} · Based on a {formatDuration(timeBudgetMinutes)} time budget — tap Filters to adjust
+                    </p>
+                  )}
                   {route.namedTrails.length > 0 && (
-                    <p className="text-xs text-gray-400 mt-1.5 truncate">Covers: {route.namedTrails.join(' · ')}</p>
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {route.namedTrails.map((t) => (
+                        <span key={t} className="text-[11px] text-forest-muted border border-green-500/40 px-2 py-0.5 rounded-full">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
                   )}
                   {route.deadheadDistanceMi > 0 && (
-                    <p className="text-[11px] text-gray-500 mt-1">
+                    <p className="text-[11px] text-forest-muted/70 mt-1.5">
                       {formatDistance(route.deadheadDistanceKm, unit)} repeated segments
+                    </p>
+                  )}
+                  {routingStrategy === 'budget_subnetwork' && trailCoveragePercent != null && trailCoveragePercent < 50 && totalParkTrailKm != null && (
+                    <p className="text-[11px] text-forest-muted/70 mt-1">
+                      This park has {formatDistance(totalParkTrailKm, unit)} of trails total — increase time budget to cover more
                     </p>
                   )}
                 </div>
@@ -319,7 +358,7 @@ export default function ParkDetailPage() {
           </div>
 
           {!routeLoading && !routeError && (parkingLots.length > 0 || restroomCount > 0) && (
-            <p className="text-gray-500 text-xs mt-3">
+            <p className="text-forest-muted text-xs mt-3">
               {[
                 parkingLots.length > 0 ? `${parkingLots.length} parking area${parkingLots.length === 1 ? '' : 's'}` : null,
                 restroomCount > 0 ? `${restroomCount} restroom${restroomCount === 1 ? '' : 's'}` : null
@@ -328,18 +367,19 @@ export default function ParkDetailPage() {
           )}
         </div>
 
-        <div className="bg-gray-900 rounded-2xl p-6 mb-6">
+        <div className="bg-forest-surface border border-forest-border rounded-2xl p-6 mb-6">
           <h3 className="text-lg font-semibold mb-4">Weather on {date}</h3>
           {loading ? (
-            <p className="text-gray-400">Loading weather...</p>
+            <p className="text-forest-muted">Loading weather...</p>
           ) : data?.weather ? (
             <div>
               <div className="flex items-center gap-6">
-                <span className="text-5xl">{getWeatherEmoji(data.weather.condition)}</span>
+                <span className="text-6xl">{getWeatherEmoji(data.weather.condition)}</span>
                 <div>
-                  <p className="text-3xl font-bold">{formatTemp(data.weather.maxTemp, unit)} / {formatTemp(data.weather.minTemp, unit)}</p>
-                  <p className="text-gray-400">{data.weather.condition}</p>
-                  <p className="text-gray-400 text-sm">Precipitation: {data.weather.precipitation}mm</p>
+                  <p className="text-3xl font-bold text-forest-text">{formatTemp(data.weather.maxTemp, unit)}</p>
+                  <p className="text-forest-muted text-sm">Low: {formatTemp(data.weather.minTemp, unit)}</p>
+                  <p className="text-forest-text mt-1">{data.weather.condition}</p>
+                  <p className="text-forest-muted text-sm">Precipitation: {data.weather.precipitation}mm</p>
                 </div>
               </div>
               {data.weatherWarning && (
@@ -349,25 +389,27 @@ export default function ParkDetailPage() {
               )}
             </div>
           ) : (
-            <p className="text-gray-400">Weather data unavailable for this date.</p>
+            <p className="text-forest-muted">Weather data unavailable for this date.</p>
           )}
         </div>
 
         {data?.elevationGain && (
-          <div className="bg-gray-900 rounded-2xl p-6 mb-6">
+          <div className="bg-forest-surface border border-forest-border rounded-2xl p-6 mb-6">
             <h3 className="text-lg font-semibold mb-2">Elevation</h3>
             <p className="text-3xl font-bold text-green-400">{formatElevation(data.elevationGain, unit)}</p>
-            <p className="text-gray-400 text-sm mt-1">Estimated elevation gain in this area</p>
+            <p className="text-forest-muted text-sm mt-1">Estimated elevation gain in this area</p>
           </div>
         )}
 
-        <div className="bg-gray-900 rounded-2xl p-6">
+        <div className="bg-forest-surface border border-forest-border rounded-2xl p-6">
           <h3 className="text-lg font-semibold mb-4">Park Information</h3>
-          <p className="text-gray-400 text-sm mb-3">
+          <p className="text-forest-muted text-sm mb-3">
             Trail and park data sourced from OpenStreetMap via Geoapify and Overpass.
           </p>
-          <p className="text-gray-400 text-sm">
-            This route covers every trail in the park at least once, starting and ending at your selected point. Dashed segments on the map are walked twice to complete the route.
+          <p className="text-forest-muted text-sm">
+            {routingStrategy === 'budget_subnetwork'
+              ? 'This route covers a priority subset of the park\'s trails within your time budget, starting and ending at your selected point. Dashed segments on the map are walked twice to complete the route.'
+              : 'This route covers every trail in the park at least once, starting and ending at your selected point. Dashed segments on the map are walked twice to complete the route.'}
           </p>
         </div>
       </div>

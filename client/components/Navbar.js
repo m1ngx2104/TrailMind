@@ -32,41 +32,43 @@ export default function Navbar({ backButton = false }) {
   };
 
   return (
-    <header className="border-b border-gray-800 px-6 py-4 flex items-center justify-between">
+    <header className="sticky top-0 z-40 border-b border-forest-border bg-forest-bg/80 backdrop-blur-md px-6 py-4 flex items-center justify-between">
       <div className="flex items-center gap-4">
         {backButton ? (
           <button
             onClick={() => window.history.back()}
-            className="text-green-400 hover:text-green-300 text-sm"
+            className="flex items-center gap-1 text-forest-muted hover:text-green-400 text-sm transition-colors duration-200"
           >
-            Back to results
+            <span aria-hidden="true">‹</span> Back to results
           </button>
         ) : null}
-        <Link href="/" className="text-xl font-bold text-green-400">TrailMind</Link>
+        <Link href="/" className="text-2xl font-bold text-green-400 flex items-center gap-1.5">
+          <span aria-hidden="true">🌲</span> TrailMind
+        </Link>
       </div>
       <div className="flex items-center gap-4">
-        <Link href="/map" className="text-sm text-gray-300 hover:text-white px-4 py-2 rounded-lg transition-colors">
+        <Link href="/map" className="text-sm text-forest-text/70 hover:text-forest-text hover:opacity-100 px-4 py-2 rounded-lg transition-colors duration-200">
           Explore Map
         </Link>
-        <Link href="/settings" className="text-sm text-gray-300 hover:text-white px-4 py-2 rounded-lg transition-colors">
+        <Link href="/settings" className="text-sm text-forest-text/70 hover:text-forest-text hover:opacity-100 px-4 py-2 rounded-lg transition-colors duration-200">
           Settings
         </Link>
         {user ? (
           <>
-            <span className="text-gray-300 text-sm">Hi, {user.name.split(' ')[0]}</span>
+            <span className="text-forest-muted text-sm">Hi, {user.name.split(' ')[0]}</span>
             <button
               onClick={handleLogout}
-              className="text-sm border border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white px-4 py-2 rounded-lg transition-colors"
+              className="text-sm text-forest-text/70 hover:text-forest-text px-2 py-2 transition-colors duration-200"
             >
               Sign out
             </button>
           </>
         ) : (
           <>
-            <Link href="/login" className="text-sm border border-gray-600 hover:border-gray-400 text-gray-300 hover:text-white px-4 py-2 rounded-lg transition-colors">
+            <Link href="/login" className="text-sm border border-forest-border hover:border-green-500/50 text-forest-text/70 hover:text-forest-text px-4 py-2 rounded-lg transition-colors duration-200">
               Sign in
             </Link>
-            <Link href="/register" className="text-sm bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg transition-colors">
+            <Link href="/register" className="text-sm bg-gradient-to-r from-green-500 to-green-600 hover:brightness-110 text-white px-4 py-2 rounded-lg transition-[filter] duration-200">
               Sign up
             </Link>
           </>

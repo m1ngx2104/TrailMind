@@ -41,14 +41,29 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
+    <main className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `
+            radial-gradient(ellipse 900px 600px at 15% 0%, #1a3d2a 0%, transparent 60%),
+            linear-gradient(to bottom, transparent 0%, #0f1712 80%),
+            #0f1712
+          `
+        }}
+      />
+      <div className="relative w-full max-w-[420px]">
+        <div className="text-center mb-6">
+          <Link href="/" className="text-2xl font-bold text-green-400 inline-flex items-center gap-1.5">
+            <span aria-hidden="true">🌲</span> TrailMind
+          </Link>
+        </div>
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">Welcome back</h1>
-          <p className="text-gray-400 mt-2">Sign in to your TrailMind account</p>
+          <h1 className="text-2xl font-bold text-white">Welcome back</h1>
+          <p className="text-[#a0b4a8] mt-2 text-sm">Sign in to your TrailMind account</p>
         </div>
 
-        <div className="bg-gray-900 rounded-2xl p-8 shadow-xl">
+        <div className="bg-[rgba(26,36,32,0.85)] backdrop-blur-xl border border-forest-border rounded-2xl p-10 shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
           {error && (
             <div className="bg-red-500/10 border border-red-500/20 text-red-400 rounded-lg p-3 mb-6 text-sm">
               {error}
@@ -62,7 +77,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Email</label>
+              <label className="block text-sm text-forest-muted mb-1">Email</label>
               <input
                 type="email"
                 name="email"
@@ -70,12 +85,12 @@ export default function LoginPage() {
                 onChange={handleChange}
                 required
                 placeholder="you@example.com"
-                className="w-full bg-gray-800 text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-600"
+                className="w-full bg-forest-bg border border-forest-border text-forest-text rounded-lg px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/30 placeholder-forest-muted/50 transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Password</label>
+              <label className="block text-sm text-forest-muted mb-1">Password</label>
               <input
                 type="password"
                 name="password"
@@ -83,12 +98,12 @@ export default function LoginPage() {
                 onChange={handleChange}
                 required
                 placeholder="Your password"
-                className="w-full bg-gray-800 text-white rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-600"
+                className="w-full bg-forest-bg border border-forest-border text-forest-text rounded-lg px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/30 placeholder-forest-muted/50 transition-colors"
               />
             </div>
 
             <div className="text-right">
-              <Link href="/forgot-password" className="text-sm text-green-400 hover:text-green-300">
+              <Link href="/forgot-password" className="text-xs text-green-400 hover:text-green-300">
                 Forgot password?
               </Link>
             </div>
@@ -96,13 +111,13 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-green-600 hover:bg-green-500 disabled:bg-green-800 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-lg transition-colors"
+              className="w-full bg-gradient-to-r from-green-500 to-green-600 disabled:from-green-800 disabled:to-green-800 disabled:cursor-not-allowed hover:brightness-110 text-white font-semibold py-3 rounded-lg transition-[filter] duration-200"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
-          <p className="text-center text-gray-500 text-sm mt-6">
+          <p className="text-center text-forest-muted text-sm mt-6">
             Don't have an account?{' '}
             <Link href="/register" className="text-green-400 hover:text-green-300">
               Sign up
